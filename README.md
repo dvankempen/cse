@@ -6,10 +6,15 @@ client-side data encryption
 Playlist URL:
 [SAP HANA Client-Side Data Encryption ](https://www.youtube.com/playlist?list=PLkzo92owKnVygoKWpwy4boITfzsJCqgxw)
 
+What's New? 
+-------
 In the first video, the concepts of client-side data encryption are explained. 
 
 [![What's New](https://img.youtube.com/vi/N8TfjarYrac/0.jpg)](https://www.youtube.com/watch?v=N8TfjarYrac "What's New")
 
+
+Getting Started with Client-Side Data Encryption
+-------
 In the next two videos, we are going to set client-side encryption up. For this, we are going to create three users: a key administrator, a data administrator, and a business user (HR Manager). 
 ```
 CREATE USER hrapp_key_admin PASSWORD **** NO FORCE_FIRST_PASSWORD_CHANGE; 
@@ -99,8 +104,10 @@ SET SCHEMA hrapp;
 ALTER CLIENTSIDE ENCRYPTION COLUMN KEY hrapp_cek1 ADD KEYCOPY ENCRYPTED WITH KEYPAIR hr_manager_ckp;
 ```
 
-
 [![Setup Client-Side Data Encryption](https://img.youtube.com/vi/AuXXG6pF-7c/0.jpg)](https://www.youtube.com/watch?v=AuXXG6pF-7c "Setup Client-Side Data Encryption")
+
+Using DML (Insert, Update, Delete) with Client-Side Data Encryption
+-------
 
 [![Setup Client-Side Data Encryption II](https://img.youtube.com/vi/Ma-0tVV4ROo/0.jpg)](https://www.youtube.com/watch?v=Ma-0tVV4ROo "Setup Client-Side Data Encryption II")
 
@@ -118,6 +125,7 @@ SELECT * FROM employees WHERE ssn = ?;
 
 [![DML](https://img.youtube.com/vi/ei-NsCi4yXk/0.jpg)](https://www.youtube.com/watch?v=ei-NsCi4yXk "DML")
 
-
+Exporting Client Key Pairs and Column Encryption Keys
+-------
 
 [![Export](https://img.youtube.com/vi/AIkyHS7UBYs/0.jpg)](https://www.youtube.com/watch?v=AIkyHS7UBYs "Export")
