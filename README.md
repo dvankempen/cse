@@ -157,7 +157,7 @@ Similarly, you can use the DROP CLIENTSIDE ENCRYPTION COLUMN KEY statement to dr
 -Z CLIENTSIDE_ENCRYPTION_KEYSTORE_PASSWORD=*** \
 "DROP CLIENTSIDE ENCRYPTION COLUMN KEY hrapp.hrapp_cek1";
 ```
-To query the presence of column encryption views on the system, use the system views:
+To query the presence of CEKs and CKPs on the system, you can use the following system views:
 ```
 SELECT * FROM CLIENTSIDE_ENCRYPTION_COLUMN_KEYS;
 SELECT * FROM CLIENTSIDE_ENCRYPTION_KEYPAIRS;
