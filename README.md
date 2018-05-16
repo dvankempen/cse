@@ -101,12 +101,17 @@ ALTER CLIENTSIDE ENCRYPTION COLUMN KEY hrapp_cek1 ADD KEYCOPY ENCRYPTED WITH KEY
 ### Tutorial Video ### 
 [![Setup Client-Side Data Encryption](https://img.youtube.com/vi/AuXXG6pF-7c/0.jpg)](https://www.youtube.com/watch?v=AuXXG6pF-7c "Setup Client-Side Data Encryption")
 
-## Using DML (Insert, Update, Delete) with Client-Side Data Encryption ##
-
-### Tutorial Video ### 
 [![Setup Client-Side Data Encryption II](https://img.youtube.com/vi/Ma-0tVV4ROo/0.jpg)](https://www.youtube.com/watch?v=Ma-0tVV4ROo "Setup Client-Side Data Encryption II")
 
-To insert or update data in the employees table, the business user will use prepared statements
+### Documentation ### 
+* [Getting Started With Client-Side Encryption](https://help.sap.com/viewer/b3ee5778bc2e4a089d3299b82ec762a7/2.0.03/en-US/445255ea54e5481faf10092118f2a514.html)
+* [Client-Side Data Encryption (SAP HANA Security Guide)](https://help.sap.com/viewer/b3ee5778bc2e4a089d3299b82ec762a7/2.0.03/en-US/d7dc0b57c68d442ebc2af3815d9ea11e.html)
+* [Client-Side Data Encryption (SAP HANA Administration Guide)](https://help.sap.com/viewer/b3ee5778bc2e4a089d3299b82ec762a7/2.0.03/en-US/445255ea54e5481faf10092118f2a514.html)
+
+## Using DML (Insert, Update, Delete) with Client-Side Data Encryption ##
+
+To insert or update data in the employees table, the business user must use prepared statements. 
+
 ```
 CONNECT hrapp_hr_manager PASSWORD ****;
 SET SCHEMA hrapp; 
@@ -119,6 +124,9 @@ SELECT * FROM employees WHERE ssn = ?;
 ```
 ### Tutorial Video ### 
 [![DML](https://img.youtube.com/vi/ei-NsCi4yXk/0.jpg)](https://www.youtube.com/watch?v=ei-NsCi4yXk "DML")
+
+### Documentation ### 
+* [Supported DML With Client-Side Encryption](https://help.sap.com/viewer/6b94445c94ae495c83a19646e7c3fd56/2.0.03/en-US/87d64b47692145d6b6e9e53c90e01cab.html)
 
 ## Exporting Client Key Pairs and Column Encryption Keys ##
 You need to export (and backup, that is, store in a safe place) both the client key pairs and column encryption keys. Although a column encryption key (copy) will be encrypted with a particular key pair, you are not required to backup or store them together. You can always create a copy of the CEK for encryption with a new CPK. 
@@ -167,6 +175,7 @@ SELECT * FROM CLIENTSIDE_ENCRYPTION_KEYPAIRS;
 [![Export](https://img.youtube.com/vi/AIkyHS7UBYs/0.jpg)](https://www.youtube.com/watch?v=AIkyHS7UBYs "Export")
 
 ### Documentation ### 
+* [Import and Export Column Encryption Keys](https://help.sap.com/viewer/6b94445c94ae495c83a19646e7c3fd56/2.0.03/en-US/604bf3f99bae4c6092ca24205298f99f.html)
 * [EXPORT Statement (Data Import Export)](https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.03/en-US/20da0bec751910148e69c9668ea3ccb8.html)
 * [Secure Key Store (hdbkeystore)](https://help.sap.com/viewer/b3ee5778bc2e4a089d3299b82ec762a7/2.0.03/en-US/65ec40dbe0cd4972bf3a240a1b963dc7.html)
 * [DROP CLIENTSIDE ENCRYPTION COLUMN KEY Statement (Encryption)](https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.03/en-US/6311317db9864dc09d697715cddaa150.html)
@@ -208,5 +217,6 @@ SELECT * FROM employees;
 [![Export](https://img.youtube.com/vi/9aeMDtoNUUE/0.jpg)](https://www.youtube.com/watch?v=9aeMDtoNUUE "Import")
 
 ### Documentation ### 
+* [Import and Export Column Encryption Keys](https://help.sap.com/viewer/6b94445c94ae495c83a19646e7c3fd56/2.0.03/en-US/604bf3f99bae4c6092ca24205298f99f.html)
 * [IMPORT Statement (Data Import Export)](https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.03/en-US/20f75ade751910148492a90e5e375b8f.html)
 * [Secure Key Store (hdbkeystore)](https://help.sap.com/viewer/b3ee5778bc2e4a089d3299b82ec762a7/2.0.03/en-US/65ec40dbe0cd4972bf3a240a1b963dc7.html)
