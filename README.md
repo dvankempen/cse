@@ -1,8 +1,6 @@
 ![SAP HANA Academy](https://yt3.ggpht.com/-BHsLGUIJDb0/AAAAAAAAAAI/AAAAAAAAAVo/6_d1oarRr8g/s100-mo-c-c0xffffffff-rj-k-no/photo.jpg)
 # Client-Side Data Encryption #
 ### Tutorial Video Playlist ### 
-=======
-Playlist URL:
 [SAP HANA Client-Side Data Encryption ](https://www.youtube.com/playlist?list=PLkzo92owKnVygoKWpwy4boITfzsJCqgxw)
 
 ## What's New? ##
@@ -130,7 +128,11 @@ The EXPORT system privilege is required to export CEKs.
 CONNECT user_admin PASSWORD ***;
 GRANT EXPORT TO hrapp_data_admin;
 ```
-To export, use the EXPORT command, the same one used as for any other SAP HANA object. WITH REPLACE is optional. If the object exists (here on the file system for the path and file name provided) an error is returned otherwise. In the code snippet below, we also export the table and drop the table to simulate moving the table object with encrypted column key to another database. 
+To export, use the EXPORT command, the same one used as for any other SAP HANA object. 
+
+WITH REPLACE is optional. If the object exists (here on the file system for the path and file name provided) an error is returned otherwise. 
+
+In the code snippet below, we also export the table and drop the table to simulate moving the table object with encrypted column key to another database. 
 ```
 CONNECT hrapp_data_admin PASSWORD ***;
 EXPORT CLIENTSIDE ENCRYPTION COLUMN KEY hrapp.hrapp_cek1 AS CSV INTO '/export/hrapp_cek1.cek' WITH REPLACE;
@@ -155,7 +157,7 @@ Similarly, you can use the DROP CLIENTSIDE ENCRYPTION COLUMN KEY statement to dr
 -Z CLIENTSIDE_ENCRYPTION_KEYSTORE_PASSWORD=*** \
 "DROP CLIENTSIDE ENCRYPTION COLUMN KEY hrapp.hrapp_cek1";
 ```
-To query the presence of column encryption views on the system, use the CLIENTSIDE_ENCRYPTION_COLUMN_KEYS and view:
+To query the presence of column encryption views on the system, use the system views:
 ```
 SELECT * FROM CLIENTSIDE_ENCRYPTION_COLUMN_KEYS;
 SELECT * FROM CLIENTSIDE_ENCRYPTION_KEYPAIRS;
@@ -173,27 +175,32 @@ SELECT * FROM CLIENTSIDE_ENCRYPTION_KEYPAIRS;
 * [CLIENTSIDE_ENCRYPTION_KEYPAIRS System View](https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.03/en-US/34d4fdb696844734ac6bd06e4de5001d.html)
 
 ## Importing Client Key Pairs and Column Encryption Keys ##
-Not surprisingly, importing client key pairs and column encryption keys very similar to exporting. 
+Not surprisingly, importing client key pairs and column encryption keys is very similar to exporting. 
 
 To import client key pairs, the password to the local key store is required (and a key export file). This activity is performed on the SAP HANA client. 
 ```
 ./hdbkeystore -p **** IMPORT '/tmp/key_admin.ckp'
 ```
 
-To import column encryption keys, the IMPORT system privilege is required (and export file). This activity can be performed on any SQL Console client (SAP HANA Database Explorer, SAP HANA Studio). 
+To import column encryption keys, the IMPORT system privilege is required (and export file). The import activity can be performed on any SQL Console client (SAP HANA Database Explorer, SAP HANA Studio). 
+
+WITH REPLACE is optional. If the object exists (in the database) an error is returned otherwise. 
+
+When restoring the data structures (import table), do not forget to re-assign the required privileges. 
 ```
 CONNECT user_admin PASSWORD ***;
 GRANT IMPORT TO hrapp_data_admin;
 
 CONNECT hrapp_data_admin PASSWORD ***;
 IMPORT CLIENTSIDE ENCRYPTION COLUMN KEY hrapp.hrapp_cek1 FROM '/export/hrapp_cek1.cek' WITH REPLACE;
+
 IMPORT hrapp.employees FROM '/export/hrapp_employees.table' WITH REPLACE;
 GRANT INSERT, SELECT, UPDATE ON hrapp.employees TO hrapp_hr_manager;
 
 -- Metadata check
 SELECT * FROM CLIENTSIDE_ENCRYPTION_COLUMN_KEYS;
 
--- data check
+-- Business User check
 CONNECT hrapp_hr_manager PASSWORD ***;
 SELECT * FROM employees;
 ```
