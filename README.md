@@ -129,9 +129,10 @@ SELECT * FROM employees WHERE ssn = ?;
 * [Supported DML With Client-Side Encryption](https://help.sap.com/viewer/6b94445c94ae495c83a19646e7c3fd56/2.0.03/en-US/87d64b47692145d6b6e9e53c90e01cab.html)
 
 ## Using DDL (Create, Alter, Drop) with Client-Side Data Encryption ##
-The CLIENTSIDE ENCRYTPION [ON WITH|WITH|OFF] clause controls client-side column encryption. 
+The CLIENTSIDE ENCRYPTION [ON WITH|WITH|OFF] clause controls client-side column encryption. 
 
-The optional [DETERMINISTIC|RANDOM] specifies which type of encryption should be used. With DETERMINISTIC, the same input data and the same CEK will return the same encryption values. 
+The optional [DETERMINISTIC|RANDOM] specifies which type of encryption should be used. With DETERMINISTIC, the same input data and the same CEK will return the same encrypted values. 
+
 While this enables you to compare encrypted values for equality, when using for booleans, flags (Y/N), or low-cardinality values (Male/Female), the original data might be guessable and hence not a good candidate for this type of encryption. 
 Default is RANDOM returning new encrypted values each time. 
 ```
@@ -201,17 +202,6 @@ Part of the client-side encryption procedure is to rotate CEKs regularly and re-
 ```
 The system views CLIENTSIDE_ENCRYPTION_KEYPAIRS, CLIENTSIDE_ENCRYPTION_COLUMN_KEYS, and TABLE_COLUMNS provide information about which columns are encrypted with the corresponding CEK/CKP combination:
 ```
-/* Encrypted columns */ 
-SELECT CASE cek.CREATED_FOR_COLUMN_KEY_ADMIN WHEN 'FALSE' THEN 'Key Copy' ELSE 'Master Key' END "Type", 
-  cek.COLUMN_KEY_NAME CEK, ckp.KEYPAIR_NAME CKP, ckp.CREATOR "Key Pair Creator", cek.CREATE_TIME "Column Key Created", ckp.CREATE_TIME "Key Pair Created", 
-  cek.SCHEMA_NAME, tc.TABLE_NAME, tc.COLUMN_NAME, tc.CLIENTSIDE_ENCRYPTION_STATUS "Status"
-  FROM CLIENTSIDE_ENCRYPTION_KEYPAIRS ckp
-       INNER JOIN 
-       CLIENTSIDE_ENCRYPTION_COLUMN_KEYS cek ON ckp.KEYPAIR_ID = cek.ENCRYPTED_WITH_KEYPAIR_ID
-       INNER JOIN
-       TABLE_COLUMNS tc ON cek.COLUMN_KEY_ID = tc.CLIENTSIDE_ENCRYPTION_COLUMN_KEY_ID
- ORDER BY cek.CREATE_TIME;
- 
  /* Available CEK with CKP */ 
  SELECT CASE cek.CREATED_FOR_COLUMN_KEY_ADMIN WHEN 'FALSE' THEN 'Key Copy' ELSE 'Master Key' END "Type", 
   cek.COLUMN_KEY_NAME CEK, ckp.KEYPAIR_NAME CKP, ckp.CREATOR "Key Pair Creator", cek.CREATE_TIME "Column Key Created", ckp.CREATE_TIME "Key Pair Created", 
