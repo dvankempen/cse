@@ -128,6 +128,105 @@ SELECT * FROM employees WHERE ssn = ?;
 ### Documentation ### 
 * [Supported DML With Client-Side Encryption](https://help.sap.com/viewer/6b94445c94ae495c83a19646e7c3fd56/2.0.03/en-US/87d64b47692145d6b6e9e53c90e01cab.html)
 
+## Using DDL (Create, Alter, Drop) with Client-Side Data Encryption ##
+The CLIENTSIDE ENCRYTPION [ON WITH|WITH|OFF] clause controls client-side column encryption. 
+
+The optional [DETERMINISTIC|RANDOM] specifies which type of encryption should be used. With DETERMINISTIC, the same input data and the same CEK will return the same encryption values. 
+While this enables you to compare encrypted values for equality, when using for booleans, flags (Y/N), or low-cardinality values (Male/Female), the original data might be guessable and hence not a good candidate for this type of encryption. 
+Default is RANDOM returning new encrypted values each time. 
+```
+/* Create table with encrypted column */
+CREATE TABLE employees (
+  emp_id INT PRIMARY KEY, 
+  name NVARCHAR(32), 
+  ssn NVARCHAR(9) CLIENTSIDE ENCRYPTION ON WITH hrapp_cek1 DETERMINISTIC,
+  salary NVARCHAR(15));
+  
+/* Enable encryption on a column after creation */
+ALTER TABLE employees ALTER (ssn ALTER CLIENTSIDE ENCRYPTION ON WITH hrapp_cek1);
+-- ALTER TABLE <table-name> ALTER (<column-name> ALTER CLIENTSIDE ENCRYPTION ON WITH <column-encryption-key> 
+--  [ RANDOM | DETERMINISTIC ]);
+  
+/* Add an encrypted column with same CEK */
+ALTER TABLE employees ALTER (salary ALTER CLIENTSIDE ENCRYPTION ON WITH hrapp_cek1);
+  
+/* Rotate CEK */ 
+ALTER TABLE employees ALTER (ssn ALTER CLIENTSIDE ENCRYPTION WITH hrapp_cek2 DETERMINISTIC);
+
+/* Disable encryption */
+ALTER TABLE employees ALTER (ssn ALTER CLIENTSIDE ENCRYPTION OFF);
+```
+The system views CLIENTSIDE_ENCRYPTION_KEYPAIRS, CLIENTSIDE_ENCRYPTION_COLUMN_KEYS, and TABLE_COLUMNS provide information about which columns are encrypted with the corresponding CEK/CKP combination:
+```
+SELECT CASE cek.CREATED_FOR_COLUMN_KEY_ADMIN WHEN 'FALSE' THEN 'Key Copy' ELSE 'Master Key' END "Type", 
+  cek.COLUMN_KEY_NAME CEK, ckp.KEYPAIR_NAME CKP, ckp.CREATOR "Key Pair Creator", cek.CREATE_TIME "Column Key Created", ckp.CREATE_TIME "Key Pair Created", 
+  cek.SCHEMA_NAME, tc.TABLE_NAME, tc.COLUMN_NAME, tc.CLIENTSIDE_ENCRYPTION_STATUS "Status"
+  FROM CLIENTSIDE_ENCRYPTION_KEYPAIRS ckp
+       INNER JOIN 
+       CLIENTSIDE_ENCRYPTION_COLUMN_KEYS cek ON ckp.KEYPAIR_ID = cek.ENCRYPTED_WITH_KEYPAIR_ID
+       INNER JOIN
+       TABLE_COLUMNS tc ON cek.COLUMN_KEY_ID = tc.CLIENTSIDE_ENCRYPTION_COLUMN_KEY_ID
+ ORDER BY cek.CREATE_TIME;
+```
+### Tutorial Video ### 
+[![DML](https://img.youtube.com/vi/4WyhrDGho6s/0.jpg)](https://www.youtube.com/watch?v=4WyhrDGho6s "DDL")
+
+### Documentation ### 
+* [Change Column Encryption Status](https://help.sap.com/viewer/6b94445c94ae495c83a19646e7c3fd56/2.0.03/en-US/b423b6ae6db248e0a45bb66114b3e389.html)
+
+## Rotate the Column Encryption Key ##
+
+Part of the client-side encryption procedure is to rotate CEKs regularly and re-encrypt your data using the most current CEK. Key copies for the new CEK must be created for users who need access to data.
+
+```
+-- Create new CEK as Key Administrator
+./hdbsql -U hrapp_key_admin \ 
+-Z CLIENTSIDE_ENCRYPTION_KEYSTORE_PASSWORD=$CSEKSPWD \
+"CREATE CLIENTSIDE ENCRYPTION COLUMN KEY hrapp.hrapp_cek2 ENCRYPTED WITH KEYPAIR key_admin_ckp";
+
+-- Add a copy for the CEK encrypted with the keypair of users who need to access the data
+./hdbsql -U hrapp_key_admin \ 
+-Z CLIENTSIDE_ENCRYPTION_KEYSTORE_PASSWORD=$CSEKSPWD \
+"ALTER CLIENTSIDE ENCRYPTION COLUMN KEY hrapp.hrapp_cek2 ADD KEYCOPY ENCRYPTED WITH KEYPAIR hr_manager_ckp";
+
+-- Update the table
+./hdbsql -U hrapp_data_admin \ 
+-Z CLIENTSIDE_ENCRYPTION_KEYSTORE_PASSWORD=$CSEKSPWD \
+"ALTER TABLE hrapp.employees ALTER (ssn ALTER CLIENTSIDE ENCRYPTION WITH hrapp.hrapp_cek2)";
+
+-- Optionally, drop the old key
+./hdbsql -U hrapp_key_admin \ 
+-Z CLIENTSIDE_ENCRYPTION_KEYSTORE_PASSWORD=$CSEKSPWD \
+"DROP CLIENTSIDE ENCRYPTION COLUMN KEY hrapp.hrapp_cek1";
+```
+The system views CLIENTSIDE_ENCRYPTION_KEYPAIRS, CLIENTSIDE_ENCRYPTION_COLUMN_KEYS, and TABLE_COLUMNS provide information about which columns are encrypted with the corresponding CEK/CKP combination:
+```
+/* Encrypted columns */ 
+SELECT CASE cek.CREATED_FOR_COLUMN_KEY_ADMIN WHEN 'FALSE' THEN 'Key Copy' ELSE 'Master Key' END "Type", 
+  cek.COLUMN_KEY_NAME CEK, ckp.KEYPAIR_NAME CKP, ckp.CREATOR "Key Pair Creator", cek.CREATE_TIME "Column Key Created", ckp.CREATE_TIME "Key Pair Created", 
+  cek.SCHEMA_NAME, tc.TABLE_NAME, tc.COLUMN_NAME, tc.CLIENTSIDE_ENCRYPTION_STATUS "Status"
+  FROM CLIENTSIDE_ENCRYPTION_KEYPAIRS ckp
+       INNER JOIN 
+       CLIENTSIDE_ENCRYPTION_COLUMN_KEYS cek ON ckp.KEYPAIR_ID = cek.ENCRYPTED_WITH_KEYPAIR_ID
+       INNER JOIN
+       TABLE_COLUMNS tc ON cek.COLUMN_KEY_ID = tc.CLIENTSIDE_ENCRYPTION_COLUMN_KEY_ID
+ ORDER BY cek.CREATE_TIME;
+ 
+ /* Available CEK with CKP */ 
+ SELECT CASE cek.CREATED_FOR_COLUMN_KEY_ADMIN WHEN 'FALSE' THEN 'Key Copy' ELSE 'Master Key' END "Type", 
+  cek.COLUMN_KEY_NAME CEK, ckp.KEYPAIR_NAME CKP, ckp.CREATOR "Key Pair Creator", cek.CREATE_TIME "Column Key Created", ckp.CREATE_TIME "Key Pair Created", 
+  cek.SCHEMA_NAME
+  FROM CLIENTSIDE_ENCRYPTION_KEYPAIRS ckp
+       INNER JOIN 
+       CLIENTSIDE_ENCRYPTION_COLUMN_KEYS cek ON ckp.KEYPAIR_ID = cek.ENCRYPTED_WITH_KEYPAIR_ID
+ ORDER BY cek.CREATE_TIME;
+```
+### Tutorial Video ### 
+[![DML](https://img.youtube.com/vi/W2xyWo2bQLw/0.jpg)](https://www.youtube.com/watch?v=W2xyWo2bQLw "Rotate CEK")
+
+### Documentation ### 
+* [Rotate Column Encryption Key](https://help.sap.com/viewer/6b94445c94ae495c83a19646e7c3fd56/2.0.03/en-US/760d41227c9d4d32b8542f47ff02b386.html)
+
 ## Exporting Client Key Pairs and Column Encryption Keys ##
 You need to export (and backup, that is, store in a safe place) both the client key pairs and column encryption keys. Although a column encryption key (copy) will be encrypted with a particular key pair, you are not required to backup or store them together. You can always create a copy of the CEK for encryption with a new CPK. 
 
