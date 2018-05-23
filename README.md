@@ -343,3 +343,20 @@ SELECT * FROM employees;
 * [Import and Export Column Encryption Keys](https://help.sap.com/viewer/6b94445c94ae495c83a19646e7c3fd56/2.0.03/en-US/604bf3f99bae4c6092ca24205298f99f.html)
 * [IMPORT Statement (Data Import Export)](https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.03/en-US/20f75ade751910148492a90e5e375b8f.html)
 * [Secure Key Store (hdbkeystore)](https://help.sap.com/viewer/b3ee5778bc2e4a089d3299b82ec762a7/2.0.03/en-US/65ec40dbe0cd4972bf3a240a1b963dc7.html)
+
+## HDB Key Store ##
+
+The location on the file system for the Key Store is in the ProgramData\.hdb\<computername>\<UID> folder on Windows and the $HOME/.hdb/<computername> directory on Linux, where the UID and the $HOME correspond to the user that create the first key pair. On Linux, file permissions are restrictive: rw for user only (600). On Windows, the file permissions allow rw for Everyone. 
+  
+To change (reset) the HDB Key Store password, you need to export the contents of the store to a (n encrypted) file, delete the key store on the file system, and import the export file specifying the new key store password. 
+```
+hdbkeystore -p <old password> EXPORT * '/tmp/key_admin.ckp' 
+rm $HOME/.hdb/$HOSTNAME/hdbkeystore.dat
+hdbkeystore -p <new password> '/tmp/key_admin.ckp' 
+```
+
+### Tutorial Video ### 
+[![DML](https://img.youtube.com/vi/xD1NVukEUYc/0.jpg)](https://www.youtube.com/watch?v=xD1NVukEUYc "HDB Key Store")
+
+### Documentation ### 
+* [Secure Key Store (hdbkeystore)](https://help.sap.com/viewer/b3ee5778bc2e4a089d3299b82ec762a7/2.0.03/en-US/65ec40dbe0cd4972bf3a240a1b963dc7.html)
