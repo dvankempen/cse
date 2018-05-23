@@ -1,13 +1,40 @@
 ![SAP HANA Academy](https://yt3.ggpht.com/-BHsLGUIJDb0/AAAAAAAAAAI/AAAAAAAAAVo/6_d1oarRr8g/s100-mo-c-c0xffffffff-rj-k-no/photo.jpg)
 # Client-Side Data Encryption #
 ### Tutorial Video Playlist ### 
-[SAP HANA Client-Side Data Encryption ](https://www.youtube.com/playlist?list=PLkzo92owKnVygoKWpwy4boITfzsJCqgxw)
+[SAP HANA Client-Side Data Encryption](https://www.youtube.com/playlist?list=PLkzo92owKnVygoKWpwy4boITfzsJCqgxw)
 
 ## What's New? ##
 In the first video, the concepts of client-side data encryption are explained. 
 ### Tutorial Video ### 
 [![What's New](https://img.youtube.com/vi/N8TfjarYrac/0.jpg)](https://www.youtube.com/watch?v=N8TfjarYrac "What's New")
 
+## Installation and Configuration ##
+
+The SAP Common Crypto Library (libsapcrypto.so/sapcrypto.dll) and the sapgenpse(.exe) utility required for client-side encryption are included with the SAP HANA client. For the latest version of the library, see [SAP Downloads on the SAP ONE Support Portal](https://support.sap.com/swdc) and search for COMMONCRYPTOLIB.
+
+To initialize the SAP Crypto Library, two environment variables need to be defined: the path to the library and to the PSE tool. For both, this is the SAP HANA client installation directory. For Windows, use Control Panel to set these as system variables. For Linux, add them to the login script (e.g. bash.rc). For SAP HANA clients that are part of a SAP HANA server installation, use the customer.sh file.
+```
+--Windows
+set PATH="C:\Program Files\sap\hdbclient;%PATH%"
+set SECUDIR="C:\Program Files\sap\hdbclient"
+
+--bash
+export LD_LIBRARY_PATH=/usr/sap/hdbclient:$LD_LIBRARY_PATH
+export SECUDIR=/usr/sap/hdbclient
+
+--csh
+setenv LD_LIBRARY_PATH=/usr/sap/hdbclient:${LD_LIBRARY_PATH}
+setenv SECUDIR=/usr/sap/hdbclient
+```
+Without these variables, the following error is returned:
+```
+*  -10429 sapcrypto library was not initialized. Check that the sapcrypto library is in the library path and SECUDIR is set appropriately.  
+```
+### Tutorial Video ### 
+[![DML](https://img.youtube.com/vi/wrcbiueS3j4/0.jpg)](https://www.youtube.com/watch?v=wrcbiueS3j4 "Installation")
+
+### Documentation ### 
+* [Configuring the Client for Client-Side Encryption and LDAP](https://help.sap.com/viewer/e7e79e15f5284474b965872bf0fa3d63/2.0.03/en-US/34712c46d7104a2d91ed2f10c66bbc9e.html)
 
 ## Getting Started with Client-Side Data Encryption ##
 In the next two videos, we are going to set client-side encryption up. For this, we are going to create three users: a key administrator, a data administrator, and a business user (HR Manager). 
