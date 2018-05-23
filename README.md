@@ -12,7 +12,7 @@ In the first video, the concepts of client-side data encryption are explained.
 
 The SAP Common Crypto Library (libsapcrypto.so/sapcrypto.dll) and the sapgenpse(.exe) utility required for client-side encryption are included with the SAP HANA client. For the latest version of the library, see [SAP Downloads on the SAP ONE Support Portal](https://support.sap.com/swdc) and search for COMMONCRYPTOLIB.
 
-To initialize the SAP Crypto Library, two environment variables need to be defined: the path to the library and to the PSE tool. For both, this is the SAP HANA client installation directory. For Windows, use Control Panel to set these as system variables. For Linux, add them to the login script (e.g. bash.rc). For SAP HANA clients that are part of a SAP HANA server installation, use the customer.sh file.
+To initialize the SAP Crypto Library, two environment variables need to be defined: the path to the library and to the PSE tool. For both, this is the SAP HANA client installation directory. 
 ```
 --Windows
 set PATH="C:\Program Files\sap\hdbclient;%PATH%"
@@ -25,6 +25,13 @@ export SECUDIR=/usr/sap/hdbclient
 --csh
 setenv LD_LIBRARY_PATH=/usr/sap/hdbclient:${LD_LIBRARY_PATH}
 setenv SECUDIR=/usr/sap/hdbclient
+```
+For Windows, use Control Panel to set these as system variables. For Linux, add them to the login script (e.g. /etc/profile.d/saphanaclient.sh). For SAP HANA clients that are part of a SAP HANA server installation, use the customer.sh file.
+```
+export HDBCLIENT=/usr/sap/hdbclient
+export LD_LIBRARY_PATH=$HDBCLIENT:$LD_LIBRARY_PATH
+export PATH=$HDBCLIENT:$PATH
+export SECUDIR=$HDBCLIENT
 ```
 Without these variables, the following error is returned:
 ```
