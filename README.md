@@ -6,7 +6,7 @@
 ## What's New? ##
 In the first video, the concepts of client-side data encryption are explained. 
 ### Tutorial Video ### 
-[![What's New](https://img.youtube.com/vi/N8TfjarYrac/0.jpg)](https://www.youtube.com/watch?v=N8TfjarYrac "What's New")
+[![What's New](https://img.youtube.com/vi/6ql1odUjsCY/0.jpg)](https://www.youtube.com/watch?v=6ql1odUjsCY "What's New")
 
 ## Installation and Configuration ##
 
