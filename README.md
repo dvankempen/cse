@@ -26,7 +26,7 @@ export SECUDIR=/usr/sap/hdbclient
 setenv LD_LIBRARY_PATH=/usr/sap/hdbclient:${LD_LIBRARY_PATH}
 setenv SECUDIR=/usr/sap/hdbclient
 ```
-For Windows, use Control Panel to set these as system variables. For Linux, add them to the login script (e.g. /etc/profile.d/saphanaclient.sh). For SAP HANA clients that are part of a SAP HANA server installation, use the customer.sh file.
+For Windows, use Control Panel to set these as system variables. For Linux, add them to the login script (e.g. hdbclient.sh in /etc/profile.d/). For SAP HANA clients that are part of a SAP HANA server installation, use the customer.sh file.
 ```
 export HDBCLIENT=/usr/sap/hdbclient
 export LD_LIBRARY_PATH=$HDBCLIENT:$LD_LIBRARY_PATH
