@@ -70,7 +70,7 @@ As the data administrator, we will first grant the (schema) privilege to create 
 ```
 CONNECT hrapp_data_admin PASSWORD ****;
 CREATE SCHEMA hrapp; 
-GRANT CLIENTSIDE ENCRYPTION COLUMN KEY ADMIN ON SCHEMA hrapp TO hrapp_key_admin WITH ADMIN OPTION; 
+GRANT CLIENTSIDE ENCRYPTION COLUMN KEY ADMIN ON SCHEMA hrapp TO hrapp_key_admin WITH GRANT OPTION; 
 ```
 
 Next, the key administrator will a local client key pair (on the client) and a encryption column key encrypted with that CKP. The key administrator will also grant the business user the (system) privilege to create local key pairs. 
